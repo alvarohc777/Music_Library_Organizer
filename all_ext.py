@@ -40,17 +40,6 @@ except:
 list_mp3 = database_mp3()
 list_mp4 = database_mp4()
 list_flac = database_flac()
-# l = len()
-print(len(list_mp3))
-
-# Inicializa la barra de progreso
-# printProgressBar(0, l, prefix="Progress:", suffix="Complete", length=50)
-
-# for i, filename in enumerate(list_mp3):
-#     file_path = f"{cwd}\\{filename}"
-#     title, artist, album = metadata_mp3(file_path)
-
-#     print(title)
 
 t0 = time.perf_counter()
 for i, filename in enumerate(list_flac):
@@ -60,25 +49,33 @@ for i, filename in enumerate(list_flac):
     new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}.flac"
     shutil.copy2(file_path, new_file_path)
     print(title, i)
+
+# 166
+# Tiempo del script 140.6982674000028s sincrónico
+# 98
+
+for i, filename in enumerate(list_mp4):
+    file_path = f"{cwd}\\{filename}"
+    title, artist, album = metadata_mp4(file_path)
+    new_file_name = name_creator(title, artist, album, new_folder)
+    new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}.m4a"
+    shutil.copy2(file_path, new_file_path)
+
+    print(title, i)
+
+
+for i, filename in enumerate(list_mp3):
+    file_path = f"{cwd}\\{filename}"
+    title, artist, album = metadata_mp3(file_path)
+    new_file_name = name_creator(title, artist, album, new_folder)
+    new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}.mp3"
+    if len(new_file_path) > 256:
+        new_file_path = f"{new_file_path[:251]}.mp3"
+    shutil.copy2(file_path, new_file_path)
+
+    print(title, i)
 tf = time.perf_counter()
-print(f"Tiempo del script {tf-t0}s")
+print(tf - t0)
 
-# for i, filename in enumerate(list_mp4):
-#     file_path = f"{cwd}\\{filename}"
-#     title, artist, album = metadata_mp4(file_path)
-#     new_file_name = name_creator(title, artist, album, new_folder)
-#     new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}.m4a"
-#     shutil.copy2(file_path, new_file_path)
 
-#     print(title, i)
-
-# for i, filename in enumerate(list_mp3):
-#     file_path = f"{cwd}\\{filename}"
-#     title, artist, album = metadata_mp3(file_path)
-#     new_file_name = name_creator(title, artist, album, new_folder)
-#     new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}.mp3"
-#     if len(new_file_path) > 256:
-#         new_file_path = f"{new_file_path[:251]}.mp3"
-#     shutil.copy2(file_path, new_file_path)
-
-#     print(title, i)
+# 1986 MP3, 18 m4a, 166flac

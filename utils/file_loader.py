@@ -38,6 +38,7 @@ def metadata_mp4(file_path):
         album = name_cleaning(album)
         artist = name_cleaning(artist)
     except KeyError:
+
         title, album, artist = no_metadata_exception(file_path)
 
     return title, artist, album
@@ -53,25 +54,42 @@ def metadata_flac(file_path):
         album = name_cleaning(album)
         artist = name_cleaning(artist)
     except KeyError:
+        print(file_path)
         title, album, artist = no_metadata_exception(file_path)
 
     return title, artist, album
 
 
 def metadata_mp3(file_path):
-    audiofile = eyed3.load(file_path)
-
-    album = audiofile.tag.album
-    artist = audiofile.tag.artist
-    title = audiofile.tag.title
+    audiofile = MP3(file_path)
     try:
+        title = audiofile["TIT2"].text[0]
+        album = audiofile["TALB"].text[0]
+        artist = audiofile["TPE1"].text[0]
         title = name_cleaning(title)
         album = name_cleaning(album)
         artist = name_cleaning(artist)
-    except TypeError:
-        title, album, artist = no_metadata_exception(file_path, title, album, artist)
+    except KeyError:
+        title, album, artist = no_metadata_exception(file_path)
 
     return title, artist, album
+
+
+# Función alternativa para mp3
+# def metadata_mp3(file_path):
+#     audiofile = eyed3.load(file_path)
+
+#     album = audiofile.tag.album
+#     artist = audiofile.tag.artist
+#     title = audiofile.tag.title
+#     try:
+#         title = name_cleaning(title)
+#         album = name_cleaning(album)
+#         artist = name_cleaning(artist)
+#     except TypeError:
+#         title, album, artist = no_metadata_exception(file_path, title, album, artist)
+#         print(f"{title} -----------------------------------------")
+#     return title, artist, album
 
 
 def no_metadata_exception(file_path, title=None, album=None, artist=None):
@@ -146,17 +164,31 @@ def name_cleaning(file):
     return file
 
 
-def data_iterator(list_mp3, list_mp4, list_flac):
-    for i, filename in enumerate(list_mp3):
-        file_path = f"{cwd}\\{filename}"
-        title, artist, album = metadata_mp3(file_path)
-        new_file_name = name_creator(title, artist, album, new_folder)
-        new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}.mp3"
-        if len(new_file_path) > 256:
-            new_file_path = f"{new_file_path[:251]}.mp3"
-        shutil.copy2(file_path, new_file_path)
+def parallel_iter(filename, cwd, new_folder):
 
-        print(title, i)
+    file_path = f"{cwd}\\{filename}"
+    title, artist, album = metadata_flac(file_path)
+    new_file_name = name_creator(title, artist, album, new_folder)
+    new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}.flac"
+    shutil.copy2(file_path, new_file_path)
+    print(title)
+
+
+def parallel_iter2(lista, cwd, new_folder, ext):
+    if ext == ".mp3":
+        metadata = metadata_mp3
+    elif ext == ".m4a":
+        metadata = metadata_mp4
+    else:
+        metadata = metadata_flac
+    for i, filename in enumerate(lista):
+        file_path = f"{cwd}\\{filename}"
+        title, artist, album = metadata(file_path)
+        new_file_name = name_creator(title, artist, album, new_folder)
+        new_file_path = f"{new_folder}\\{artist}\\{album}\\{new_file_name}{ext}"
+        shutil.copy2(file_path, new_file_path)
+        print(title)
+
 
 def main():
     database_list = glob.glob(r"**/*.mp3", recursive=True)

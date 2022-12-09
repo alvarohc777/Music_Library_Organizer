@@ -63,18 +63,3 @@ for i, filename in enumerate(lista):
     # print(new_file_name)
     shutil.copy2(file_path, new_file_path)
     printProgressBar(i + 1, l, prefix="Progress:", suffix="Complete", length=50)
-
-    # print(f"Procesando: {new_file_name}")
-
-# audiofile = eyed3.load("C:\\Users\\USER\\Documents\\Alvaro\\prueba_musica\\Musica\\1-07 Heroin.mp3")
-# # audiofile = eyed3.core.load("C:\\Users\\USER\\Documents\\Alvaro\\prueba_musica\\Musica\\1-07 Heroin.mp3")
-# print(audiofile.tag.title)
-# print(audiofile.tag.artist)
-# print(audiofile.tag.album)
-# print(audiofile.tag.album_artist)
-# print(audiofile.tag.composer)
-# print(audiofile.tag.publisher)
-# print(audiofile.tag.genre.name)
-# print(audiofile.tag.recording_date)
-# print(audiofile.tag.publisher)
-# print(audiofile.tag.cd_id)
